@@ -29,8 +29,8 @@
             
             #listausuarios table thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
             #listausuarios table td {padding: 0.3em;}
-            #listausuarios table .cellon {}
-            #listausuarios table .celloff {background-color: #c63939;}
+            #listausuarios table .cellon {background-color: #00ff00;}
+            #listausuarios table .celloff {background-color: #ff1a1a; color: #FFFFFF;}
             
             /*  DOWNLOADS */
             
@@ -262,6 +262,10 @@
             // update chart after specified time. 
             setInterval(function(){updateChart()}, updateInterval);
             
+            //------------------------------------------------------------------------
+            
+            
+            
             //USUARIOS
             
             function addUser(id, nome, ip, status) {
@@ -274,6 +278,7 @@
                 col2.innerHTML = nome;
                 col3.innerHTML = ip;
                 col4.innerHTML = status == "on" ? "Online" : "Offline";
+                col4.className = status == "on" ? "cellon" : "celloff";
             }
             
             function getUser(id) {
@@ -289,12 +294,14 @@
                 var linha = document.getElementById("tabelausuarios").rows[usuario.linhatabela];
                 linha.cells[2].innerHTML = ip;
                 linha.cells[3].innerHTML = "Online";
+                linha.cells[3].className = "cellon";
             }
             
             function offlineUser(id) {
                 usuario = getUser(id);
                 var linha = document.getElementById("tabelausuarios").rows[usuario.linhatabela];
                 linha.cells[3].innerHTML = "Offline";
+                linha.cells[3].className = "celloff";
             }
             
             //LOG
