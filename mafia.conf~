@@ -1,0 +1,4 @@
+portaprincipal: 8080
+portawebserver: 8090
+portawebsocketserver: 9000
+

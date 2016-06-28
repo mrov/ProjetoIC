@@ -1,0 +1,418 @@
+<html>
+    <head>
+        <title>Máfia do vinil</title>
+        <meta charset="utf-8" />
+        <style type="text/css">
+            body {margin: 0;}
+            a:focus {outline: none;}
+
+
+            header #top {background-color: #FF9900; width: 100%; height: 8.5em;}
+            header img {margin: 1em;}
+            header nav {background-color: #333333; float: left; width: 100%; padding: 0;}
+            header nav ul {margin: 0;padding: 0;}
+            header nav ul li {list-style: none; float: left;}
+            header nav ul .menuat {background-color: #FFFFFF;}
+            header nav ul li a {text-decoration: none; padding: 1em 1em; display: block;}
+            header nav ul li .linkdesat {font-family: arial; color: #FFFFFF;}
+            header nav ul .menuat a {font-family: arial; color: #000000;}
+            
+            .content {float: left; margin: 2em 1em; color: #003366;}
+            .content h1 {font-family: arial;}
+            
+            /* MUSICAS */
+            
+            #listamusicas table thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
+            #listamusicas table td {padding: 0.3em;}
+            
+            /* USUARIOS */
+            
+            #listausuarios table thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
+            #listausuarios table td {padding: 0.3em;}
+            #listausuarios table .cellon {}
+            #listausuarios table .celloff {background-color: #c63939;}
+            
+            /*  DOWNLOADS */
+            
+            #downloads #statusrede {position: absolute; bottom: 0; left: 0; width: 100%; height: 8em; box-sizing: border-box;}
+            #downloads #statusrede #rede {float: left; width: 100%; height: 6em;}
+            #downloads #statusrede #rede #bandarede {float: left; width: 10em; border-right: 1px solid #CCCCCC; height: 6em;}
+            #downloads #statusrede #descpainelrede {font-style: arial; float: left; background-color: #CCCCCC; width: 100%; box-sizing: border-box; padding: 0.3em; height: 2em;}
+            #downloads #statusrede #taxa {float: left; width: 100%; font-style: arial; font-size: 1.5em; color: #44FF44; text-align: center; margin-top: 1em;}
+            #downloads #statusrede #rede #graficorede {float: left;}
+            #downloads #statusrede #rede .canvasjs-chart-credit {display: none;} /* nada contra os créditos, mas essa div buga a altura do gráfico*/
+           
+            
+            /* LOG */
+            
+            #log #logmsg {color: #000000;}
+        </style>
+        <script src="porta.js"></script>
+        <script type="text/javascript" src="canvasjs.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <div id="top">
+                <img src="img/top.png" />
+            </div>
+            <nav>
+                <ul>
+                    <li class="menuat"><a href="javascript: void(0)" onclick="mudapag(this, 'musicas')" class="linkdesat">Músicas</a></li>
+                    <li><a href="javascript: void(0)" onclick="mudapag(this, 'downloads')" class="linkdesat">Downloads</a></li>
+                    <li><a href="javascript: void(0)" onclick="mudapag(this, 'usuarios')" class="linkdesat">Usuários</a></li>
+                    <li><a href="javascript: void(0)" onclick="mudapag(this, 'log')" class="linkdesat">Log</a></li>
+                </ul>
+            </nav>
+        </header>
+        <article class="tela">
+            <div class="content" id="musicas" style="display: block;">
+                <h1>Músicas</h1>
+                <div id="listamusicas">
+                    <table id="tabelamusicas">
+                        <thead>
+                            <td>Id</td>
+                            <td>Nome da faixa</td>
+                            <td>Banda/Artista</td>
+                            <td>Duração</td>
+                            <td>Tam</td>
+                        </thead>
+                        <tr>
+                        </tr>
+                    </table>
+                    <audio>
+                        <source src="" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+        </article>
+        <article class="tela">
+            <div class="content" id="downloads" style="display: none;">
+                <h1>Downloads</h1>
+                
+                <div id="statusrede">
+                    <span id="descpainelrede">Rede</span>
+                    <div id="rede">
+                        <div id="bandarede">
+                            <span id="taxa">0 B/s</span>
+                        </div>
+                        <div id="graficorede" style="height: 6em; width: calc(100% - 10em - 2px);">a
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <article class="tela">
+            <div class="content" id="usuarios" style="display: none;">
+                <h1>Usuários</h1>
+                <div id="listausuarios">
+                    <table id="tabelausuarios">
+                        <thead>
+                            <td>Id</td>
+                            <td>Nome</td>
+                            <td>Ip</td>
+                            <td>Status</td>
+                        </thead>
+                        <tr>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </article>
+        <article class="tela">
+            <div class="content" id="log" style="display: none;">
+                <h1>Log</h1>
+                <div id="logmsg">
+                </div>
+            </div>
+        </article>
+        <footer>
+        </footer>
+        <script type="text/javascript">
+            function mudapag(obj, pag) {
+                var paginas = document.getElementsByClassName("content");
+                var menus = document.getElementsByTagName("li");
+                for(var i = 0; i < paginas.length; i++) {
+                    menus[i].className = "";
+                    paginas[i].style.display = "none";
+                }
+                obj.parentNode.className = "menuat";
+                document.getElementById(pag).style.display = "block";
+            }
+            
+            var host = "ws://" + window.location.hostname;
+            
+            var musicas;
+            var downloads;
+            var usuarios;
+            
+            //MUSICAS
+            
+            function addMusica(id, nome, artista, duracao, tam, path) {
+                var linha = document.getElementById("tabelamusicas").insertRow(-1);
+                var col1 = linha.insertCell(0);
+                var col2 = linha.insertCell(1);
+                var col3 = linha.insertCell(2);
+                var col4 = linha.insertCell(3);
+                var col5 = linha.insertCell(4);
+                var col6 = linha.insertCell(5);
+                col1.innerHTML = id;
+                col2.innerHTML = nome;
+                col3.innerHTML = artista;
+                
+                var minutos = parseInt(duracao / 60);
+                var segundos = parseInt(duracao % 60);
+                
+                var desctempo = minutos + ":" + segundos;
+                
+                col4.innerHTML = desctempo;
+                
+                var kb = tam / 1024;
+                var mb = kb / 1024;
+                var gb = mb / 1024;
+                
+                var desctam;
+                if(parseInt(gb) > 0) desctam =  Number(gb).toFixed(2) + " GB";
+                else if(parseInt(mb) > 0) desctam =  Number(mb).toFixed(2) + " MB";
+                else if(parseInt(kb) > 0) desctam =  Number(kb).toFixed(2) + " KB";
+                else desctam = Number(tam).toFixed(2)  + " Bytes";
+                
+                col5.innerHTML = desctam;
+                col6.innerHTML = "<img src='img/icon_play.png' onclick=\"play(this, '" + path + "')\" class='btnplayer' />";
+            }
+            
+            var btnplaying;
+            document.getElementsByTagName("audio")[0].onended = function() {
+               pause(btnplaying);
+            };
+            
+            function play(elem, musica) {
+                if(btnplaying != null) {
+                    btnplaying.src = "img/icon_play.png";
+                    pause(btnplaying);
+                }
+                
+                
+                if(musica != document.getElementsByTagName("audio")[0].src) {
+                    document.getElementsByTagName("audio")[0].currentTime = 0;
+                }
+                btnplaying = elem;
+                elem.src = "img/icon_pause.png";
+                elem.onclick = function() {
+                    pause(this);
+                };
+                document.getElementsByTagName("audio")[0].src = musica;
+                document.getElementsByTagName("audio")[0].play();
+            }
+            
+            function pause(elem) { //alert(document.getElementsByTagName("audio")[0].src);
+                document.getElementsByTagName("audio")[0].pause();
+                elem.src = "img/icon_play.png";
+                var mus = document.getElementsByTagName("audio")[0].src;
+                elem.onclick = function() {
+                  play(this,  mus);  
+                };
+            }
+            
+            //DOWNLOADS
+            
+            var rede = 0;
+            
+                //grafico, usa biblioteca do canvasjs.com
+            
+            var dps = []; // dataPoints
+
+            var chart = new CanvasJS.Chart("graficorede",{
+                title :{
+                    
+                },			
+                data: [{
+                    type: "line",
+                    dataPoints: dps 
+                }]
+            });
+
+            var xVal = "0";
+            var yVal = 100;	
+            var updateInterval = 500;
+            var dataLength = 500;
+
+            var updateChart = function (count) {
+                count = count || 1;
+                
+                for (var j = 0; j < count; j++) {	
+                    yVal = yVal +  Math.round(5 + Math.random() *(-5-5)); //mudar para variável rede
+                    dps.push({
+                        x: xVal,
+                        y: yVal
+                    });
+                    xVal++;
+                };
+                if (dps.length > dataLength)
+                {
+                    dps.shift();				
+                }
+                
+                chart.render();		
+
+            };
+
+            // generates first set of dataPoints
+            updateChart(dataLength); 
+
+            // update chart after specified time. 
+            setInterval(function(){updateChart()}, updateInterval);
+            
+            //USUARIOS
+            
+            function addUser(id, nome, ip, status) {
+                var linha = document.getElementById("tabelausuarios").insertRow(-1);
+                var col1 = linha.insertCell(0);
+                var col2 = linha.insertCell(1);
+                var col3 = linha.insertCell(2);
+                var col4 = linha.insertCell(3);
+                col1.innerHTML = id;
+                col2.innerHTML = nome;
+                col3.innerHTML = ip;
+                col4.innerHTML = status == "on" ? "Online" : "Offline";
+            }
+            
+            function getUser(id) {
+                for(var i = 0; i < usuarios.length; i++) {
+                    if(usuarios[i].id == id) {
+                        return usuarios[i];
+                    }
+                }
+            }
+            
+            function onlineUser(id, ip) {
+                usuario = getUser(id);
+                var linha = document.getElementById("tabelausuarios").rows[usuario.linhatabela];
+                linha.cells[2].innerHTML = ip;
+                linha.cells[3].innerHTML = "Online";
+            }
+            
+            function offlineUser(id) {
+                usuario = getUser(id);
+                var linha = document.getElementById("tabelausuarios").rows[usuario.linhatabela];
+                linha.cells[3].innerHTML = "Offline";
+            }
+            
+            //LOG
+            
+            function logLocal(msg) {
+                addlog("Web", msg);
+            }
+            
+            function addlog(onde, msg) {
+                var rel = new Date();
+                var hora = "[" + ("0" + rel.getDate()).slice(-2) + "/" + ("0" + (rel.getMonth() + 1)).slice(-2) + "/" + rel.getFullYear() + " " + ("0" + rel.getHours()).slice(-2) + ":" + ("0" + rel.getMinutes()).slice(-2) + ":" + ("0" + rel.getSeconds()).slice(-2) + "]";
+                document.getElementById("logmsg").innerHTML += "<span>" + hora + " &lt;" + onde + "&gt;: " + msg + "</span><br />";
+            }
+            
+            
+                      
+            //WEBSOCKET
+            
+            var mySocket = new WebSocket(host + ":" + porta);
+            
+            function enviarMsg() {
+                var texto = document.getElementById("txt").value;
+                mySocket.send(texto);
+                alert("tam = " + texto.length);
+            }
+            mySocket.onopen = function(evt) {
+                logLocal("WebSocket conectado ao servidor");
+                // Enviando dados
+                //mySocket.send("c");
+                mySocket.send("WebSocket Rocks!");
+                // Fecha o WebSocket
+                //mySocket.close();
+            };
+            mySocket.onmessage = function(evt) {
+            	var dec = decodeURIComponent(evt.data);
+                var obj = JSON.parse(dec);
+                switch(obj.cod) {
+                    case "1":
+                        logLocal("Sincronizando dados com o servidor");
+                        musicas = obj.musicas;
+                        listaMusicas();
+                        usuarios = obj.usuarios;
+                        listaUsuarios();
+                    break;
+                        
+                    case "2":
+                    break;
+                    
+                    case "4":
+                        addlog(obj.quem, obj.msg);
+                    break;
+                    
+                    case "5":
+                        switch(obj.param) {
+                            case "1":
+                                onlineUser(obj.usuario.id, obj.usuario.ip);
+                                addlog("RootServer", "---> Usuário conectado (IP: " + obj.usuario.ip + ") ");
+                            break;
+                            case "2":
+                                offlineUser(obj.usuario.id);
+                            break;
+                        }
+                    break;
+                    
+                    case "6":
+                        addUser(obj.id, obj.nome, obj.ip, "off");
+                        u = usuarios[usuarios.length] = new Object();
+                        u.id = id;
+                        u.nome = nome;
+                        u.ip = ip;
+                        u.status = "off";
+                        var tabela = document.getElementById("tabelausuarios");
+                        var qtdlinhas = tabela.rows.length;
+                        u.linhatabela = qtdlinhas;
+                    break;
+                }
+                // alert("Mensagem recebida: " + evt.data);
+            };
+            mySocket.onclose = function(evt) {
+                logLocal("Conexão com o servidor encerrada");
+            };
+            mySocket.onerror = function(evt) {
+                logLocal("Erro: conexão com o servidor perdida");
+            };
+            
+            function listaMusicas() {
+                //limpa tabela
+                var tabela = document.getElementById("tabelamusicas");
+                var qtdlinhas = tabela.rows.length;
+                for(var i = 2; i < qtdlinhas; i++) tabela.deleteRow(i);
+                //----
+                for(var i = 0; i < musicas.length; i++) {
+                    addMusica(musicas[i].id, musicas[i].nome, musicas[i].artista, musicas[i].duracao, musicas[i].tam, musicas[i].path);
+                    musicas[i].linhatabela = i + 2;
+                }
+            }
+            
+            function listaUsuarios() {
+                //limpa tabela
+                var tabela = document.getElementById("tabelausuarios");
+                var qtdlinhas = tabela.rows.length;
+                for(var i = 2; i < qtdlinhas; i++) tabela.deleteRow(i);
+                //----
+                for(var i = 0; i < usuarios.length; i++) {
+                    addUser(usuarios[i].id, usuarios[i].nome, usuarios[i].ip, usuarios[i].status);
+                    usuarios[i].linhatabela = i + 2;
+                }
+            }
+            
+            
+            
+            //testes
+       
+            //document.getElementsByTagName("audio")[0].play();
+            
+            // logLocal("Novo download iniciado");
+            // logLocal("Novo download iniciado");
+            
+        </script>
+    </body>
+</html>
