@@ -60,6 +60,7 @@ public class testescliente { //arquivos de testes do cliente
 			int r = entrada.read();
 			if(r == 0) {
 				System.out.println("Logado");
+				//saida.write(4 << 4); //cod de logout (0100 0000)
 			} else {
 				System.out.println("Login ou senha incorretos");
 			}

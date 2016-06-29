@@ -40,10 +40,13 @@ public class Conexao extends Thread {
 				int par = b & 127;
 				switch(op) {
 				case 0:
-					this.Cadastro();
+					this.cadastro();
 					return;
 				case 1:
-					this.Login();
+					this.login();
+					break;
+				case 4:
+					this.close();
 					break;
 				}
 			} catch (IOException e) {
@@ -52,7 +55,7 @@ public class Conexao extends Thread {
 		}
 	}
 	
-	public void Cadastro() {
+	public void cadastro() {
 		try {
 			int b = this.entrada.read(); //tam da string do usuário
 			byte[] user = new byte[b];
@@ -81,7 +84,7 @@ public class Conexao extends Thread {
 		}
 	}
 	
-	public void Login() {
+	public void login() {
 		try {
 			int b = this.entrada.read();
 			byte[] user = new byte[b];
@@ -93,7 +96,7 @@ public class Conexao extends Thread {
 			String senha = new String(pass);
 			String ip = this.socket.getRemoteSocketAddress().toString();
 			try {
-				this.server.loginUsuario(nome, senha, ip.substring(1, ip.lastIndexOf(":")));
+				this.user = this.server.loginUsuario(nome, senha, ip.substring(1, ip.lastIndexOf(":")));
 				this.saida.write(0);
 			} catch (FalhaLoginException e) {
 				this.saida.write(1);
