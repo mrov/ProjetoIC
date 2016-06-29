@@ -41,7 +41,15 @@
             #downloads #statusrede #taxa {float: left; width: 100%; font-style: arial; font-size: 1.5em; color: #44FF44; text-align: center; margin-top: 1em;}
             #downloads #statusrede #rede #graficorede {float: left;}
             #downloads #statusrede #rede .canvasjs-chart-credit {display: none;} /* nada contra os créditos, mas essa div buga a altura do gráfico*/
-           
+            
+            #downloads #listadownloads {padding-bottom: 6em;}
+            #listadownloads #tabeladownloads thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
+            #listadownloads #tabeladownloads td {padding: 0.3em;}
+            #listadownloads #tabeladownloads td .downloadbar {width: 7em; height: 1em; border: 1px solid #CCCCCC; position: relative; overflow-x: hidden; overflow-y: hidden;}
+            #listadownloads #tabeladownloads td .dlbarc {position: absolute; top: 0; left: 0; width: 100%; height: 1em;}
+            #listadownloads #tabeladownloads td .dlbarc span {display: block; width: 7em; height: 1em; text-align: center;}
+            #listadownloads #tabeladownloads td .dlbard {position: absolute; top: 0; left: 0; height: 1em;  overflow-x: hidden; overflow-y: hidden;}
+            #listadownloads #tabeladownloads td .dlbard span {display: block; width: 7em; height: 1em; text-align: center; background-color: #00FF00; color: #FFFFFF;}
             
             /* LOG */
             
@@ -88,7 +96,40 @@
         <article class="tela">
             <div class="content" id="downloads" style="display: none;">
                 <h1>Downloads</h1>
-                
+                <div id="listadownloads">
+                    <table id="tabeladownloads">
+                        <thead>
+                            <td>Usuário</td>
+                            <td>IP</td>
+                            <td>Música</td>
+                            <td>Status</td>
+                            <td>Tamanho</td>
+                            <td>Completo</td>
+                            <td>Enviado</td>
+                            <td>Conclusão</td>
+                        </thead>
+                        <tr></tr>
+                        <tr>
+                            <td>teste</td>
+                            <td>123</td>
+                            <td>ok</td>
+                            <td>Enviando</td>
+                            <td>1 MB</td>
+                            <td style="padding: 0;">
+                                <div class="downloadbar">
+                                    <div class="dlbarc">
+                                        <span>0%</span>
+                                    </div>
+                                    <div class="dlbard" style="width: 50%;">
+                                        <span>0%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>500 KB</td>
+                            <td>10 segundos</td>
+                        </tr>
+                    </table>
+                </div>
                 <div id="statusrede">
                     <span id="descpainelrede">Rede</span>
                     <div id="rede">
@@ -217,7 +258,7 @@
             
             var rede = 0;
             
-                //grafico, usa biblioteca do canvasjs.com
+            //--------------------------------------grafico, usa biblioteca pronta do canvasjs.com
             
             var dps = []; // dataPoints
 
@@ -234,13 +275,13 @@
             var xVal = "0";
             var yVal = 100;	
             var updateInterval = 500;
-            var dataLength = 500;
+            var dataLength = 100;//500;
 
             var updateChart = function (count) {
                 count = count || 1;
                 
                 for (var j = 0; j < count; j++) {	
-                    yVal = yVal +  Math.round(5 + Math.random() *(-5-5)); //mudar para variável rede
+                    yVal = rede; //yVal +  Math.round(5 + Math.random() *(-5-5)); //mudar para variável rede
                     dps.push({
                         x: xVal,
                         y: yVal
@@ -256,13 +297,14 @@
 
             };
 
-            // generates first set of dataPoints
             updateChart(dataLength); 
-
-            // update chart after specified time. 
             setInterval(function(){updateChart()}, updateInterval);
             
-            //------------------------------------------------------------------------
+            //------------------------------------------fim de cod. do canvasJS
+            
+            
+            //DOWNLOADS
+            
             
             
             

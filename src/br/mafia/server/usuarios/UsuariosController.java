@@ -99,7 +99,7 @@ public class UsuariosController {
 	}
 	
 	public Usuario cadastrarUsuario(String nome, String senha, String ip) throws UsuarioJaCadastradoException {
-		if(this.getUsuarioNome(nome) != null) {
+		if(this.getUsuarioNome(nome) != null) { System.out.println("nome: " + nome);
 			throw new UsuarioJaCadastradoException();
 		}
 		Usuario u = new Usuario(this.id++, nome, senha, ip);
@@ -123,7 +123,7 @@ public class UsuariosController {
 	
 	private Usuario getUsuarioNome(String nome) {
 		Usuario u = null;
-		for(int i = 0; i < this.repusers.size(); i++) if(this.repusers.get(i).getNome().equals("nome")) u = this.repusers.get(i);
+		for(int i = 0; i < this.repusers.size(); i++) if(this.repusers.get(i).getNome().equals(nome)) u = this.repusers.get(i);
 		return  u;
 	}
 	

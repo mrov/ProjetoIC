@@ -33,6 +33,7 @@ public class Server {
 		this.conf = new Config("mafia.conf"); //procura o arquivo de configuração mafia.conf no diretório do programa
 		this.musicas = new MusicasController(this.conf.getArquivomusicas()); //cria um novo controlador com a lista de músicas do arquivo xml
 		this.root = new RootServer(this.conf, this);
+		new Thread(this.root).start();
 		this.webserver = new WebServerController(this.conf);
 		try {
 			this.websocketserver = new WebSocketServer(this.conf, this);
