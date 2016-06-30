@@ -66,6 +66,7 @@ public class testescliente { //arquivos de testes do cliente
 				System.out.println("Listando músicas\n");
 				
 				saida.write(32); //cod de solicitação de lista de músicas por nome (0010 0000) = 32
+				//saida.write(33); //cod de solicitação de lista de músicas por artista (0010 0001) = 33
 				String busca = "1999";
 				saida.write(busca.length()); //envia tamanho da string de busca
 				saida.write(busca.getBytes()); //envia string de busca
