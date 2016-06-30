@@ -59,8 +59,61 @@ public class testescliente { //arquivos de testes do cliente
 			saida.write(senha.getBytes());
 			int r = entrada.read();
 			if(r == 0) {
-				System.out.println("Logado");
+				System.out.println("Logado\n");
 				//saida.write(4 << 4); //cod de logout (0100 0000)
+				
+				/* INÍCIO DA LISTAGEM DE MÚSICAS !!! */
+				System.out.println("Listando músicas\n");
+				
+				saida.write(32); //cod de solicitação de lista de músicas por nome (0010 0000) = 32
+				String busca = "1999";
+				saida.write(busca.length()); //envia tamanho da string de busca
+				saida.write(busca.getBytes()); //envia string de busca
+				
+				int res = entrada.read();
+				
+				if(res == 32) { //início da lista, esse teste na verdade nem precisa ser feito, o retorno sempre é 32..
+					int qtdmusicas = entrada.read() << 8; //captura primeiro byte
+					qtdmusicas = qtdmusicas | entrada.read(); //captura segundo byte
+					
+					int idmusica, duracao, tamstr1, tamstr2, tamstr3;
+					long tam = 0L;
+					String nome, artista, path;
+					
+					for(int i = 0; i < qtdmusicas; i++) {
+						idmusica = entrada.read() << 8;
+						idmusica = idmusica | entrada.read();
+						
+						tam = entrada.read() << 24;
+						tam = tam | (entrada.read() << 16);
+						tam = tam | (entrada.read() << 8);
+						tam = tam | entrada.read();
+						
+						duracao = entrada.read() << 8;
+						duracao = duracao | entrada.read();
+						
+						tamstr1 = entrada.read();
+						byte[] bnome = new byte[tamstr1];
+						entrada.read(bnome);
+						nome = new String(bnome, "UTF-8");
+						
+						tamstr2 = entrada.read();
+						byte[] bartista = new byte[tamstr2];
+						entrada.read(bartista);
+						artista = new String(bartista, "UTF-8");
+						
+						tamstr3 = entrada.read();
+						byte[] bpath = new byte[tamstr3];
+						entrada.read(bpath);
+						path = new String(bpath, "UTF-8");
+						
+						System.out.println("nome: " + nome + " artista: " + artista + " tam (bytes): " + tam + " duracao (seg): " + duracao + " path: " + path);
+					}
+				}
+				
+				/* FIM DA LISTAGEM DE MÚSICAS */
+				
+				
 			} else {
 				System.out.println("Login ou senha incorretos");
 			}

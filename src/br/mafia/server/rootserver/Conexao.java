@@ -1,10 +1,13 @@
-package br.mafia.server.program;
+package br.mafia.server.rootserver;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import br.mafia.server.musicas.Musica;
+import br.mafia.server.program.Server;
 import br.mafia.server.usuarios.FalhaLoginException;
 import br.mafia.server.usuarios.Usuario;
 import br.mafia.server.usuarios.UsuarioJaCadastradoException;
@@ -37,13 +40,16 @@ public class Conexao extends Thread {
 			try {
 				int b = this.entrada.read();
 				int op = b >> 4;
-				int par = b & 127;
+				int par = b & 15;
 				switch(op) {
 				case 0:
 					this.cadastro();
 					return;
 				case 1:
 					this.login();
+					break;
+				case 2:
+					this.procuramusicas(par);
 					break;
 				case 4:
 					this.close();
@@ -86,7 +92,7 @@ public class Conexao extends Thread {
 	
 	public void login() {
 		try {
-			int b = this.entrada.read();
+			int b = this.entrada.read(); //tam da string do usuário
 			byte[] user = new byte[b];
 			this.entrada.read(user);
 			String nome= new String(user);
@@ -105,7 +111,65 @@ public class Conexao extends Thread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} //tam da string do usuário
+		} 
+	}
+	
+	public void procuramusicas(int param) {
+		int b;
+		try {
+			b = this.entrada.read(); //tam da string de busca
+			byte[] busca = new byte[b];
+			this.entrada.read(busca);
+			String pesquisa = new String(busca);
+			
+			ArrayList<Musica> musicas = this.server.procurarMusica(param, pesquisa);
+			int qtdmusicas = musicas.size();
+			this.saida.write(32);
+			this.saida.write(qtdmusicas >> 8);
+			this.saida.write(qtdmusicas & 255);
+			
+			Musica atual;
+			int id;
+			long tam;
+			int dur;
+			String nome, artista, path;
+			
+			for(int i = 0; i < qtdmusicas; i++) {
+				atual = musicas.get(i);
+				id = atual.getId();
+				
+				this.saida.write(id >> 8); //escreve primeiro byte do ID
+				this.saida.write(id & 255); //escreve segundo byte do ID
+				
+				tam = atual.getTam();
+				this.saida.write((int)(tam >> 24)); //escreve primeiro byte do tam
+				this.saida.write((int)((tam >> 16) & 255)); //escreve segundo byte do tam
+				this.saida.write((int)((tam >> 8) & 255)); //escreve terceiro byte do tam
+				this.saida.write((int)(tam & 255)); //escreve quarto byte do tam
+				
+				dur = atual.getDuracao();
+				this.saida.write(dur >> 8); //escreve primeiro byte da duração
+				this.saida.write(dur & 255); //escreve segundo byte da duração
+				
+				nome = atual.getNome(); System.out.println(nome);
+				byte[] bnome = nome.getBytes("UTF-8");
+				this.saida.write(bnome.length); //escreve tamanho da string de nome da música
+				this.saida.write(bnome); //escreve nome da música
+				
+				artista = atual.getArtista();
+				byte[] bartista = artista.getBytes("UTF-8");
+				this.saida.write(bartista.length); //escreve tamanho da string de nome do artista
+				this.saida.write(bartista); //escreve nome do artista
+				
+				path = atual.getPath();
+				byte[] bpath = path.getBytes("UTF-8");
+				this.saida.write(bpath.length); //escreve tamanho da string do "caminho" da música
+				this.saida.write(bpath); //escreve "caminho" da música
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void close() {

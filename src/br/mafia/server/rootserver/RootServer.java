@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import br.mafia.server.program.Conexao;
 import br.mafia.server.program.Server;
 import br.mafia.server.util.Config;
 
