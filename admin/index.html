@@ -411,13 +411,13 @@
                     case "6":
                         addUser(obj.id, obj.nome, obj.ip, "off");
                         u = usuarios[usuarios.length] = new Object();
-                        u.id = id;
-                        u.nome = nome;
-                        u.ip = ip;
+                        u.id = obj.id;
+                        u.nome = obj.nome;
+                        u.ip = obj.ip;
                         u.status = "off";
                         var tabela = document.getElementById("tabelausuarios");
                         var qtdlinhas = tabela.rows.length;
-                        u.linhatabela = qtdlinhas;
+                        u.linhatabela = qtdlinhas - 1;
                     break;
                 }
                 // alert("Mensagem recebida: " + evt.data);

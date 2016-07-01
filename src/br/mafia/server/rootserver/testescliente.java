@@ -19,8 +19,8 @@ public class testescliente { //arquivos de testes do cliente
 			InputStream entrada = s.getInputStream();
 			
 			
-			String usuario = "opa";
-			String senha = "ok";
+			String usuario = "casa";
+			String senha = "123";
 			saida.write(0); //cod de cadastro ("0000 0000")
 			saida.write(usuario.length());
 			saida.write(usuario.getBytes());
@@ -50,8 +50,8 @@ public class testescliente { //arquivos de testes do cliente
 			InputStream entrada = s.getInputStream();
 			
 			
-			String usuario = "ok";
-			String senha = "blabla";
+			String usuario = "casa";
+			String senha = "123";
 			saida.write(1 << 4); //cod de login ("0001 0000")
 			saida.write(usuario.length());
 			saida.write(usuario.getBytes());
