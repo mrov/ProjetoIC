@@ -151,7 +151,7 @@ public class Conexao extends Thread {
 				this.saida.write(dur >> 8); //escreve primeiro byte da duração
 				this.saida.write(dur & 255); //escreve segundo byte da duração
 				
-				nome = atual.getNome(); System.out.println(nome);
+				nome = atual.getNome();
 				byte[] bnome = nome.getBytes("UTF-8");
 				this.saida.write(bnome.length); //escreve tamanho da string de nome da música
 				this.saida.write(bnome); //escreve nome da música

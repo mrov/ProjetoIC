@@ -36,7 +36,7 @@ public class MafiaServer {
 					}
 				} catch (FalhaLoginException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+																																																																																																																																																																																																																																																																																																																																																				e.printStackTrace();
 				}
 				
 			} catch (ArquivoConfigNaoEncontradoException e) {
