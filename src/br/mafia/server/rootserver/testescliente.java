@@ -1,5 +1,7 @@
 package br.mafia.server.rootserver;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -110,6 +112,34 @@ public class testescliente { //arquivos de testes do cliente
 						path = new String(bpath, "UTF-8");
 						
 						System.out.println("nome: " + nome + " artista: " + artista + " tam (bytes): " + tam + " duracao (seg): " + duracao + " path: " + path);
+						
+						//Download da música
+						
+						saida.write(48); //cod de solicitação de download (0011 0000)
+						saida.write(idmusica >> 8); //envia o id da música em 2 bytes
+						saida.write(idmusica & 255); 
+						int iddownload = entrada.read() << 8; //captura o id de download gerado
+						iddownload = iddownload | entrada.read();
+						System.out.println("\nid download: " + iddownload);
+						
+						saida.write(49); //solicita arquivo (0011 0001)
+						saida.write(0);saida.write(1); //escreve id de download
+						saida.write(0);saida.write(0);saida.write(0);saida.write(0);//escreve byte inicial em 4 bytes
+						OutputStream out = null;
+						try {
+				            out = new FileOutputStream(path);
+				        } catch (FileNotFoundException ex) {
+				            System.out.println("Erro");
+				        }
+
+				        byte[] bytes = new byte[16*1024];
+
+				        int count;
+				        while ((count = entrada.read(bytes)) > 0) {
+				            out.write(bytes, 0, count);
+				        }
+						
+						// fim download da música
 					}
 				}
 				

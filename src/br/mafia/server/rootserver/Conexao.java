@@ -51,6 +51,22 @@ public class Conexao extends Thread {
 				case 2:
 					this.procuramusicas(par);
 					break;
+				case 3:
+					switch(par) {
+					case 0:
+						this.solicitarDownload();
+						break;
+					case 1:
+						this.iniciarDownload();
+						break;
+					case 2:
+						this.pausarDownload();
+						break;
+					case 3:
+						this.cancelarDownload();
+						break;
+					}
+					break;
 				case 4:
 					this.close();
 					break;
@@ -166,6 +182,59 @@ public class Conexao extends Thread {
 				this.saida.write(bpath.length); //escreve tamanho da string do "caminho" da música
 				this.saida.write(bpath); //escreve "caminho" da música
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void solicitarDownload() {
+		try {
+			int idmusica = this.entrada.read() << 8;
+			idmusica = idmusica | this.entrada.read();
+			
+			int iddownload = this.server.solicitarDownload(idmusica, this.user);
+			this.saida.write(iddownload >> 8);
+			this.saida.write(iddownload & 255);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void iniciarDownload() {
+		try {
+			int iddownload = this.entrada.read() << 8;
+			iddownload = iddownload | this.entrada.read();
+			
+			long offset = this.entrada.read() << 24;
+			offset = offset | (this.entrada.read() << 16);
+			offset = offset | (this.entrada.read() << 8);
+			offset = offset | (this.entrada.read());
+			
+			this.server.baixarMusica(iddownload, offset, this.socket);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void pausarDownload() {
+		try {
+			int iddownload = this.entrada.read() << 8;
+			iddownload = iddownload | this.entrada.read();
+			this.server.pausarDownload(iddownload);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void cancelarDownload() {
+		try {
+			int iddownload = this.entrada.read() << 8;
+			iddownload = iddownload | this.entrada.read();
+			this.server.cancelarDownload(iddownload);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

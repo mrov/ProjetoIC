@@ -3,6 +3,7 @@ package br.mafia.server.program;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 import br.mafia.server.musicas.Musica;
 import br.mafia.server.musicas.MusicaNaoEncontradaException;
 import br.mafia.server.musicas.MusicasController;
+import br.mafia.server.rootserver.Download;
 import br.mafia.server.rootserver.RootServer;
 import br.mafia.server.usuarios.FalhaLoginException;
 import br.mafia.server.usuarios.Usuario;
@@ -141,6 +143,30 @@ public class Server {
 	
 	// } Fim WebSocketServer
 	
+	// { RootServer
+	
+	public int solicitarDownload(int idmusica, Usuario usuario) {
+		int id = this.root.solicitarDownload(idmusica, usuario);
+		return id;
+	}
+	
+	public void baixarMusica(int id, long offset, Socket socket) {
+		this.getDownload(id).baixar(offset, socket);
+	}
+	
+	public Download getDownload(int id) {
+		return this.root.getDownload(id);
+	}
+	
+	public void pausarDownload(int id) {
+		this.getDownload(id).pausar();
+	}
+	
+	public void cancelarDownload(int id) {
+		this.getDownload(id).cancelar();
+	}
+	
+	// } Fim RootServer
 	
 	// { Configurações
 	
