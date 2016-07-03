@@ -123,7 +123,7 @@ public class testescliente { //arquivos de testes do cliente
 						System.out.println("\nid download: " + iddownload);
 						
 						saida.write(49); //solicita arquivo (0011 0001)
-						saida.write(0);saida.write(1); //escreve id de download
+						saida.write(iddownload >> 8);saida.write(iddownload & 255); //escreve id de download
 						saida.write(0);saida.write(0);saida.write(0);saida.write(0);//escreve byte inicial em 4 bytes
 						OutputStream out = null;
 						try {

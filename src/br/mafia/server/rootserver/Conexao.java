@@ -70,6 +70,9 @@ public class Conexao extends Thread {
 				case 4:
 					this.close();
 					break;
+				case 5:
+					this.user.ping();
+					break;
 				}
 			} catch (IOException e) {
 				if(!this.socket.isClosed()) this.close();

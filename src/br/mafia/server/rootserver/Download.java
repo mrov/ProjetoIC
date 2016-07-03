@@ -8,6 +8,7 @@ import java.io.RandomAccessFile;
 import java.net.Socket;
 
 import br.mafia.server.musicas.Musica;
+import br.mafia.server.program.Server;
 import br.mafia.server.usuarios.Usuario;
 import br.mafia.server.util.Config;
 
@@ -17,11 +18,12 @@ public class Download {
 	private Usuario usuario;
 	private long enviado;
 	private long ultimaleitura;
-	private int status; //0 -> enviando | 1 -> pausado | 2 -> cancelado | 3 -> problema
+	private int status; //0 -> enviando | 1 -> pausado | 2 -> cancelado | 3 -> problema | 4 -> concluído
 	public static int nextid = 1;
 	private Config conf;
+	private Server server;
 	
-	public Download(Musica musica, Usuario usuario, Config conf) {
+	public Download(Musica musica, Usuario usuario, Config conf, Server server) {
 		this.id = Download.nextid++;
 		this.musica = musica;
 		this.usuario = usuario;
@@ -29,6 +31,7 @@ public class Download {
 		this.ultimaleitura = 0;
 		this.status = 0;
 		this.conf = conf;
+		this.server = server;
 	}
 	
 	public int getId() {
@@ -44,6 +47,7 @@ public class Download {
 	}
 	
 	public long getEnviado() {
+		this.ultimaleitura = this.enviado;
 		return this.enviado;
 	}
 	
@@ -78,10 +82,13 @@ public class Download {
 		            out.write(bytes, 0, count);
 		            this.enviado += count;
 		        }
+				this.status = 4;
+				this.server.downloadFinalizado(this.id);
 				r.close();
 				out.close();
 				socket.close();
 			} catch (IOException e) {
+				if(this.status == 0) this.status = 3;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

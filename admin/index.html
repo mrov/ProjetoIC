@@ -17,7 +17,7 @@
             header nav ul li .linkdesat {font-family: arial; color: #FFFFFF;}
             header nav ul .menuat a {font-family: arial; color: #000000;}
             
-            .content {float: left; margin: 2em 1em; color: #003366;}
+            .content {float: left; margin: 2em 1em; color: #003366; width: calc(100% - 2em);}
             .content h1 {font-family: arial;}
             
             /* MUSICAS */
@@ -42,7 +42,7 @@
             #downloads #statusrede #rede #graficorede {float: left;}
             #downloads #statusrede #rede .canvasjs-chart-credit {display: none;} /* nada contra os créditos, mas essa div buga a altura do gráfico*/
             
-            #downloads #listadownloads {padding-bottom: 6em;}
+            #downloads #listadownloads {width: 100%; padding-bottom: 6em; max-height: calc(100% - (8.5em + 8em + 2em + 14em)); overflow-x: auto;}
             #listadownloads #tabeladownloads thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
             #listadownloads #tabeladownloads td {padding: 0.3em;}
             #listadownloads #tabeladownloads td .downloadbar {width: 7em; height: 1em; border: 1px solid #CCCCCC; position: relative; overflow-x: hidden; overflow-y: hidden;}
@@ -106,6 +106,7 @@
                             <td>Tamanho</td>
                             <td>Completo</td>
                             <td>Enviado</td>
+                            <td>Taxa UP</td>
                             <td>Conclusão</td>
                         </thead>
                         <tr></tr>
@@ -150,7 +151,7 @@
                         <thead>
                             <td>Id</td>
                             <td>Nome</td>
-                            <td>Ip</td>
+                            <td>IP</td>
                             <td>Status</td>
                         </thead>
                         <tr>
@@ -273,7 +274,7 @@
             });
 
             var xVal = "0";
-            var yVal = 100;	
+            var yVal = 10000;	
             var updateInterval = 500;
             var dataLength = 100;//500;
 
@@ -281,7 +282,7 @@
                 count = count || 1;
                 
                 for (var j = 0; j < count; j++) {	
-                    yVal = rede; //yVal +  Math.round(5 + Math.random() *(-5-5)); //mudar para variável rede
+                    yVal = rede;//yVal +  Math.round(5 + Math.random() *(-5-5)); //mudar para variável rede
                     dps.push({
                         x: xVal,
                         y: yVal
@@ -298,14 +299,131 @@
             };
 
             updateChart(dataLength); 
-            setInterval(function(){updateChart()}, updateInterval);
+            //setInterval(function(){updateChart()}, updateInterval);
             
             //------------------------------------------fim de cod. do canvasJS
             
             
             //DOWNLOADS
             
+            function tamToString(tam) {
+                var kb = tam / 1024;
+                var mb = kb / 1024;
+                var gb = mb / 1024;
+                
+                var desctam;
+                if(parseInt(gb) > 0) desctam =  Number(gb).toFixed(2) + " GB";
+                else if(parseInt(mb) > 0) desctam =  Number(mb).toFixed(2) + " MB";
+                else if(parseInt(kb) > 0) desctam =  Number(kb).toFixed(2) + " KB";
+                else desctam = Number(tam).toFixed(2)  + " Bytes";
+                return desctam;       
+            }
             
+            function taxaString(taxa) {
+                var kb = taxa / 1024;
+                var mb = kb / 1024;
+                var gb = mb / 1024;
+                
+                var desctam;
+                if(parseInt(gb) > 0) desctam =  Number(gb).toFixed(0) + " GB/s";
+                else if(parseInt(mb) > 0) desctam =  Number(mb).toFixed(0) + " MB/s";
+                else if(parseInt(kb) > 0) desctam =  Number(kb).toFixed(0) + " KB/s";
+                else desctam = Number(taxa).toFixed(0)  + " B/s";
+                return desctam;       
+            }
+            
+            function addDownload(usuario, ip, musica, status, tam, enviado) {//enviado = 1024 * 1024 * 5;
+                var linha = document.getElementById("tabeladownloads").insertRow(-1);
+                var col1 = linha.insertCell(0);
+                var col2 = linha.insertCell(1);
+                var col3 = linha.insertCell(2);
+                var col4 = linha.insertCell(3);
+                var col5 = linha.insertCell(4);
+                var col6 = linha.insertCell(5);
+                var col7 = linha.insertCell(6);
+                var col8 = linha.insertCell(7);
+                var col9 = linha.insertCell(8);
+                col1.innerHTML = usuario;
+                col2.innerHTML = ip;
+                col3.innerHTML = musica;
+                var st;
+                switch(status) {
+                    case "0" :
+                        st = "Enviando";
+                        break;
+                    case "1" :
+                        st = "Pausado";
+                        break;
+                    case "2" :
+                        st = "Cancelado";
+                        break;
+                    case "3" :
+                        st = "Erro";
+                        break;
+                    case "4" :
+                        st = "Concluído";
+                        break;    
+                }
+                col4.innerHTML = st;
+                col5.innerHTML = tamToString(tam);  
+                
+                var barradownload = document.createElement("div");
+                barradownload.className = "downloadbar";
+                var barradownloadtamconst = document.createElement("div");
+                barradownloadtamconst.className = "dlbarc";
+                var porcentagemtamconst = document.createElement("span");
+                var porcentagemtamconsttext = document.createTextNode(Number(((enviado / tam) * 100)).toFixed(1) + "%");
+                porcentagemtamconst.appendChild(porcentagemtamconsttext);
+                barradownloadtamconst.appendChild(porcentagemtamconst);
+                barradownload.appendChild(barradownloadtamconst);
+                
+                var barradownloadtamdin = document.createElement("div");
+                barradownloadtamdin.className = "dlbard";
+                barradownloadtamdin.style.width = ((enviado / tam) * 100) + "%";
+                var porcentagemtamdin = document.createElement("span");
+                var porcentagemtamdintext = document.createTextNode(Number(((enviado / tam) * 100)).toFixed(1) + "%");
+                porcentagemtamdin.appendChild(porcentagemtamdintext);
+                barradownloadtamdin.appendChild(porcentagemtamdin);
+                barradownload.appendChild(barradownloadtamdin);
+                
+                col6.appendChild(barradownload);
+                
+                col7.innerHTML = tamToString(enviado);
+                if(status != 4) col8.innerHTML = "0.0 B/s"; 
+            }
+            
+            function atualizaDownloads(dl) {console.log(dl.length);
+                rede = 0;
+                for(var i = 0; i < dl.length; i++) {
+                    rede += dl[i].taxa;
+                    var d = getDownload(dl[i].id);
+                    var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                    var barc = linha.cells[5].getElementsByClassName("dlbarc")[0];
+                    barc.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
+                    
+                    
+                    var bar = linha.cells[5].getElementsByClassName("dlbard")[0];
+                    bar.style.width = ((dl[i].enviado / d.tamanho) * 100) + "%";
+                    bar.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
+                    
+                    linha.cells[6].innerHTML = tamToString(dl[i].enviado);
+                    linha.cells[7].innerHTML = taxaString(dl[i].taxa);
+                    
+                }
+                document.getElementById("taxa").innerHTML = taxaString(rede);
+                rede = rede / 1024;
+                updateChart();
+            }
+            
+            
+            function getDownload(id) {
+                for(var i = 0; i < downloads.length; i++) {
+                    if(downloads[i].id == id) {console.log("pqp");
+                        return downloads[i];
+                    }
+                }console.log("merda");
+                return null;
+            }
             
             
             //USUARIOS
@@ -329,6 +447,7 @@
                         return usuarios[i];
                     }
                 }
+                return null;
             }
             
             function onlineUser(id, ip) {
@@ -387,9 +506,49 @@
                         listaMusicas();
                         usuarios = obj.usuarios;
                         listaUsuarios();
+                        downloads = obj.downloads;
+                        listaDownloads();
                     break;
                         
                     case "2":
+                    break;
+                    
+                    case "3":
+                        switch(obj.param) {
+                            case "1":
+                                addDownload(obj.usuario, obj.ip, obj.musica, obj.status, obj.tam, obj.enviado);
+                                d = downloads[downloads.length] = new Object();
+                                d.id = obj.id;
+                                d.usuario = obj.usuario;
+                                d.ip = obj.ip;
+                                d.musica = obj.musica;
+                                d.status = obj.status;
+                                d.tamanho = obj.tam;
+                                d.enviado = obj.enviado;
+                                var tabela = document.getElementById("tabeladownloads");
+                                var qtdlinhas = tabela.rows.length;
+                                d.linhatabela = qtdlinhas - 1;
+                            break;
+                            case "5": //mostra dowload como finalizado
+                                var d = getDownload(obj.id);
+                                var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                                linha.cells[3].innerHTML = "Concluído";
+                                linha.cells[6].innerHTML = linha.cells[4].innerHTML;
+                                linha.cells[7].innerHTML = "";
+                                linha.cells[8].innerHTML = "";
+                                
+                                var barc = linha.cells[5].getElementsByClassName("dlbarc")[0];
+                                barc.innerHTML = "<span>100%</span>";
+                                
+                                
+                                var bar = linha.cells[5].getElementsByClassName("dlbard")[0];
+                                bar.style.width = "100%";
+                                bar.innerHTML = "<span>100%</span>";
+                            break;
+                            case "6":
+                                atualizaDownloads(obj.downloads);
+                            break;
+                        }
                     break;
                     
                     case "4":
@@ -451,6 +610,19 @@
                     addUser(usuarios[i].id, usuarios[i].nome, usuarios[i].ip, usuarios[i].status);
                     usuarios[i].linhatabela = i + 2;
                 }
+            }
+            
+            function listaDownloads() {
+                //limpa tabela
+                var tabela = document.getElementById("tabeladownloads");
+                var qtdlinhas = tabela.rows.length;
+                for(var i = 2; i < qtdlinhas; i++) tabela.deleteRow(i);
+                //----
+                for(var i = 0; i < downloads.length; i++) {
+                    addDownload(downloads[i].usuario, downloads[i].ip, downloads[i].musica, downloads[i].status, downloads[i].tamanho, downloads[i].enviado);
+                    downloads[i].linhatabela = i + 2;
+                }
+                
             }
             
             

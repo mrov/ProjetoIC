@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import br.mafia.server.musicas.Musica;
 import br.mafia.server.program.Server;
+import br.mafia.server.rootserver.Download;
 import br.mafia.server.usuarios.Usuario;
 import br.mafia.server.util.EncodingUtil;
 
@@ -241,6 +242,23 @@ public class WebSocket {
 			}
 			
 			root.put("usuarios", jsusers);
+			
+			ArrayList<Download> downloads = this.server.getAllDownloads();
+			JSONArray jsdownloads = new JSONArray();
+			for(int i = 0; i < downloads.size(); i++) {
+				Download atual = downloads.get(i);
+				JSONObject download = new JSONObject();
+				download.put("id", String.valueOf(atual.getId()));
+				download.put("usuario", atual.getUsuario().getNome());
+				download.put("ip", atual.getUsuario().getIp());
+				download.put("musica", atual.getMusica().getNome());
+				download.put("status", String.valueOf(atual.getStatus()));
+				download.put("tamanho", String.valueOf(atual.getMusica().getTam()));
+				download.put("enviado", String.valueOf(atual.getEnviado()));
+				jsdownloads.put(download);
+			}
+			
+			root.put("downloads", jsdownloads);
 			
 			try {
 				this.sendMsg(root.toString());

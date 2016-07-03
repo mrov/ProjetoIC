@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import br.mafia.server.musicas.Musica;
 import br.mafia.server.musicas.MusicaNaoEncontradaException;
 import br.mafia.server.program.Server;
 import br.mafia.server.usuarios.Usuario;
@@ -41,16 +42,10 @@ public class RootServer extends Thread {
 		}
 	}
 	
-	public int solicitarDownload(int idmusica, Usuario usuario) {
-		try {
-			Download d = new Download(this.server.getMusica(idmusica), usuario, this.conf);
-			this.downloads.add(d);
-			return d.getId();
-		} catch (MusicaNaoEncontradaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 0;
+	public int solicitarDownload(Musica musica, Usuario usuario) {
+		Download d = new Download(musica, usuario, this.conf, this.server);
+		this.downloads.add(d);
+		return d.getId();
 	}
 	
 	public Download getDownload(int id) {
