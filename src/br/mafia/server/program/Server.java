@@ -195,17 +195,51 @@ public class Server {
 	
 	public void pausarDownload(int id) {
 		this.getDownload(id).pausar();
+		JSONObject root = new JSONObject();
+		try {
+			root.put("cod", "3");
+			root.put("param", "3");
+			root.put("id", String.valueOf(id));
+			this.AdminBroadcast(root.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void cancelarDownload(int id) {
 		this.getDownload(id).cancelar();
+		JSONObject root = new JSONObject();
+		try {
+			root.put("cod", "3");
+			root.put("param", "4");
+			root.put("id", String.valueOf(id));
+			this.AdminBroadcast(root.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void downloadProblema(int id) {
+		this.getDownload(id).cancelar();
+		JSONObject root = new JSONObject();
+		try {
+			root.put("cod", "3");
+			root.put("param", "4");
+			root.put("id", String.valueOf(id));
+			this.AdminBroadcast(root.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void downloadFinalizado(int id) {
 		JSONObject root = new JSONObject();
 		try {
 			root.put("cod", "3");
-			root.put("param", "5");
+			root.put("param", "2");
 			root.put("id", String.valueOf(id));
 			this.AdminBroadcast(root.toString());
 		} catch (JSONException e) {

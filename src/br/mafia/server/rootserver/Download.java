@@ -88,9 +88,18 @@ public class Download {
 				out.close();
 				socket.close();
 			} catch (IOException e) {
-				if(this.status == 0) this.status = 3;
+				try {//aguarda um pouco por algum comando do cliente, se ele não avisar que pausou ou cancelou o download é sinal que deu merda
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if(this.status == 0) {
+					this.status = 3;
+					this.server.downloadProblema(this.id);
+				}
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

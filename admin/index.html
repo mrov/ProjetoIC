@@ -416,23 +416,24 @@
                 for(var i = 0; i < dl.length; i++) {
                     rede += dl[i].taxa;
                     var d = getDownload(dl[i].id);
-                    var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
-                    var barc = linha.cells[5].getElementsByClassName("dlbarc")[0];
-                    barc.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
-                    
-                    
-                    var bar = linha.cells[5].getElementsByClassName("dlbard")[0];
-                    bar.style.width = ((dl[i].enviado / d.tamanho) * 100) + "%";
-                    bar.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
-                    
-                    linha.cells[6].innerHTML = tamToString(dl[i].enviado);
-                    linha.cells[7].innerHTML = taxaString(dl[i].taxa);
-                    
-                    var restante = d.tamanho - dl[i].enviado;
-                    var segundos = restante / dl[i].taxa;
-                    
-                    linha.cells[8].innerHTML = tempoString(segundos);
-                    
+                    if(d != null) {
+                        var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                        var barc = linha.cells[5].getElementsByClassName("dlbarc")[0];
+                        barc.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
+                        
+                        
+                        var bar = linha.cells[5].getElementsByClassName("dlbard")[0];
+                        bar.style.width = ((dl[i].enviado / d.tamanho) * 100) + "%";
+                        bar.innerHTML = "<span>" + Number(((dl[i].enviado / d.tamanho) * 100)).toFixed(1) + "%</span>";
+                        
+                        linha.cells[6].innerHTML = tamToString(dl[i].enviado);
+                        linha.cells[7].innerHTML = taxaString(dl[i].taxa);
+                        
+                        var restante = d.tamanho - dl[i].enviado;
+                        var segundos = restante / dl[i].taxa;
+                        
+                        linha.cells[8].innerHTML = tempoString(segundos);
+                    }                   
                 }
                 document.getElementById("taxa").innerHTML = taxaString(rede);
                 rede = rede / 1024;
@@ -553,7 +554,7 @@
                                 var qtdlinhas = tabela.rows.length;
                                 d.linhatabela = qtdlinhas - 1;
                             break;
-                            case "5": //mostra dowload como finalizado
+                            case "2": //mostra dowload como finalizado
                                 var d = getDownload(obj.id);
                                 var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
                                 linha.cells[3].innerHTML = "Concluído";
@@ -568,6 +569,27 @@
                                 var bar = linha.cells[5].getElementsByClassName("dlbard")[0];
                                 bar.style.width = "100%";
                                 bar.innerHTML = "<span>100%</span>";
+                            break;
+                            case "3":
+                                var d = getDownload(obj.id);
+                                if(d != null) {
+                                     var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                                     linha.cells[3].innerHTML = "Pausado";
+                                }
+                            break;
+                            case "4":
+                                var d = getDownload(obj.id);
+                                if(d != null) {
+                                     var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                                     linha.cells[3].innerHTML = "Cancelado";
+                                }
+                            break;
+                            case "5":
+                                var d = getDownload(obj.id);
+                                if(d != null) {
+                                     var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                                     linha.cells[3].innerHTML = "Erro";
+                                }
                             break;
                             case "6":
                                 atualizaDownloads(obj.downloads);
