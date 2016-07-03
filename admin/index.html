@@ -42,7 +42,7 @@
             #downloads #statusrede #rede #graficorede {float: left;}
             #downloads #statusrede #rede .canvasjs-chart-credit {display: none;} /* nada contra os créditos, mas essa div buga a altura do gráfico*/
             
-            #downloads #listadownloads {width: 100%; padding-bottom: 6em; max-height: calc(100% - (8.5em + 8em + 2em + 14em)); overflow-x: auto;}
+            #downloads #listadownloads {width: 100%; max-height: calc(100% - (8.5em + 8em + 2em + 8em)); overflow-x: auto;}
             #listadownloads #tabeladownloads thead {font-style: arial; background-color: #CCCCCC; color: #333333;}
             #listadownloads #tabeladownloads td {padding: 0.3em;}
             #listadownloads #tabeladownloads td .downloadbar {width: 7em; height: 1em; border: 1px solid #CCCCCC; position: relative; overflow-x: hidden; overflow-y: hidden;}
@@ -332,6 +332,25 @@
                 return desctam;       
             }
             
+            function tempoString(segundos) {
+                var minutos = segundos / 60;
+                var horas = minutos / 60;
+                
+                var desctempo;
+                if(parseInt(horas) > 0) {
+                    var sufixo = parseInt(horas) == 1 ? " Hora" : " Horas";
+                    desctempo = parseInt(horas) + sufixo;
+                } else if(parseInt(minutos) > 0) {
+                    var sufixo = parseInt(minutos) == 1 ? " Minuto" : " Minutos";
+                    desctempo = parseInt(minutos) + sufixo;
+                } else {
+                    if(parseInt(segundos) == 0) segundos = 1;
+                    var sufixo = parseInt(segundos) == 1 ? " Segundo" : " Segundos";
+                    desctempo = parseInt(segundos) + sufixo;
+                }
+                return desctempo;
+            }
+            
             function addDownload(usuario, ip, musica, status, tam, enviado) {//enviado = 1024 * 1024 * 5;
                 var linha = document.getElementById("tabeladownloads").insertRow(-1);
                 var col1 = linha.insertCell(0);
@@ -392,7 +411,7 @@
                 if(status != 4) col8.innerHTML = "0.0 B/s"; 
             }
             
-            function atualizaDownloads(dl) {console.log(dl.length);
+            function atualizaDownloads(dl) {
                 rede = 0;
                 for(var i = 0; i < dl.length; i++) {
                     rede += dl[i].taxa;
@@ -409,6 +428,11 @@
                     linha.cells[6].innerHTML = tamToString(dl[i].enviado);
                     linha.cells[7].innerHTML = taxaString(dl[i].taxa);
                     
+                    var restante = d.tamanho - dl[i].enviado;
+                    var segundos = restante / dl[i].taxa;
+                    
+                    linha.cells[8].innerHTML = tempoString(segundos);
+                    
                 }
                 document.getElementById("taxa").innerHTML = taxaString(rede);
                 rede = rede / 1024;
@@ -418,10 +442,10 @@
             
             function getDownload(id) {
                 for(var i = 0; i < downloads.length; i++) {
-                    if(downloads[i].id == id) {console.log("pqp");
+                    if(downloads[i].id == id) {
                         return downloads[i];
                     }
-                }console.log("merda");
+                }
                 return null;
             }
             
