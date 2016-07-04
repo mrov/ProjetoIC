@@ -86,7 +86,7 @@ public class Config {
 		writer.println("userwebserver: root");
 		writer.println("passwordwebserver: 123");
 		writer.println("portawebsocketserver: 8082");
-		writer.println("freqatualizawebsocket: 1000"); //em milisegundos
+		writer.println("freqatualizawebsocket: 500"); //em milisegundos
 		writer.println("arquivomusicas: " + Config.dir + File.separator + "musicas.xml");
 		writer.println("arquivousuarios: " + Config.dir + File.separator + "usuarios.xml");
 		writer.println("pastamusicas: " + Config.dir + File.separator + "musicas");
