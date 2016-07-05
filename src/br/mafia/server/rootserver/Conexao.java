@@ -122,9 +122,9 @@ public class Conexao extends Thread {
 			String ip = this.socket.getRemoteSocketAddress().toString();
 			try {
 				this.user = this.server.loginUsuario(nome, senha, ip.substring(1, ip.lastIndexOf(":")));
-				this.saida.write(0);
+				this.saida.write(16);
 			} catch (FalhaLoginException e) {
-				this.saida.write(1);
+				this.saida.write(17);
 				this.socket.close();
 			}
 		} catch (IOException e) {
