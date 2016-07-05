@@ -50,7 +50,7 @@ public class Download_cliente extends Thread{
 				saida_t.write((byte_init & 255) >> 16);
 				saida_t.write((byte_init & 255) >> 8);
 				saida_t.write(byte_init & 255);
-				System.out.println("Download iniciado");
+				System.out.println("Download iniciado em " + byte_init + " bytes");
 				System.out.println("Vai salvar em: " + caminho);
 				int bytes_receive=0;
 				byte[] buffer = new byte[1024*4];
@@ -59,19 +59,18 @@ public class Download_cliente extends Thread{
 				if (byte_init == 0) download = new FileOutputStream(caminho);  //está começando agora
 				else download = new FileOutputStream(caminho, true);           //continuando download
 
-				int total_bytes=0;
+//				int total_bytes=0;
 				while ( !Thread.currentThread().isInterrupted() && pause == 0 && (bytes_receive = entrada_t.read(buffer)) > 0){ //recebe dados e grava no buffer
 					download.write(buffer, 0, bytes_receive); //envia dados do buffer para o arquivo
-					total_bytes+=bytes_receive;
-					System.out.println("T. Bytes recebidos: " + total_bytes);
-					System.out.println(((double)total_bytes/(double)tam)*100 + "%");
+					byte_init+=bytes_receive;
+//					System.out.println("T. Bytes recebidos: " + total_bytes);
+					System.out.println(((double)byte_init/(double)tam)*100 + "%");
 				}
 				if (Thread.currentThread().isInterrupted() ){
 					System.out.println("Download " + id_download + " cancelado");
 				} else if (pause == 0) System.out.println("Download " + id_download + " concluído");
 				else {
-					System.out.println("Download " + id_download + " pausado");
-					byte_init = total_bytes;
+					System.out.println("Download " + id_download + " pausado em " + byte_init);
 				}
 				client.addMusica(id_musica, nome, artista, duracao, path, tam);
 

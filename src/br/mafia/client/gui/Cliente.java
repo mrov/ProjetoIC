@@ -34,6 +34,14 @@ public class Cliente {
 		this.root.logout();
 	}
 	
+	public ArrayList<Musica> procurarMusicaNome(String busca) {
+		return this.root.procuraMusica(busca, 32);
+	}
+	
+	public ArrayList<Musica> procurarMusicaArtista(String busca) {
+		return this.root.procuraMusica(busca, 33);
+	}
+	
 	// } </ROOT>
 	
 	// { <MUSICAS>
