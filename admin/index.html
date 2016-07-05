@@ -408,7 +408,7 @@
                 col6.appendChild(barradownload);
                 
                 col7.innerHTML = tamToString(enviado);
-                if(status != 4) col8.innerHTML = "0.0 B/s"; 
+                if(status != 4) col8.innerHTML = "0 B/s"; 
             }
             
             function atualizaDownloads(dl) {
@@ -430,9 +430,13 @@
                         linha.cells[7].innerHTML = taxaString(dl[i].taxa);
                         
                         var restante = d.tamanho - dl[i].enviado;
-                        var segundos = restante / dl[i].taxa;
+						if(taxa > 0) {
+							var segundos = restante / dl[i].taxa;
+							linha.cells[8].innerHTML = tempoString(segundos);
+						} else {
+							linha.cells[8].innerHTML = "∞"
+						}
                         
-                        linha.cells[8].innerHTML = tempoString(segundos);
                     }                   
                 }
                 document.getElementById("taxa").innerHTML = taxaString(rede);
@@ -575,6 +579,8 @@
                                 if(d != null) {
                                      var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
                                      linha.cells[3].innerHTML = "Pausado";
+									 linha.cells[7].innerHTML = "";
+									 linha.cells[8].innerHTML = "";
                                 }
                             break;
                             case "4":
@@ -582,6 +588,8 @@
                                 if(d != null) {
                                      var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
                                      linha.cells[3].innerHTML = "Cancelado";
+									 linha.cells[7].innerHTML = "";
+									 linha.cells[8].innerHTML = "";
                                 }
                             break;
                             case "5":
@@ -589,6 +597,8 @@
                                 if(d != null) {
                                      var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
                                      linha.cells[3].innerHTML = "Erro";
+									 linha.cells[7].innerHTML = "";
+									 linha.cells[8].innerHTML = "";
                                 }
                             break;
                             case "6":
