@@ -213,7 +213,7 @@ public class Conexao extends Thread {
 			long offset = this.entrada.read() << 24;
 			offset = offset | (this.entrada.read() << 16);
 			offset = offset | (this.entrada.read() << 8);
-			offset = offset | (this.entrada.read());
+			offset = offset | (this.entrada.read()); System.out.println("iniciando upload em: " + offset);
 			
 			this.server.baixarMusica(iddownload, offset, this.socket);
 		} catch (IOException e) {
