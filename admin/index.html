@@ -430,7 +430,7 @@
                         linha.cells[7].innerHTML = taxaString(dl[i].taxa);
                         
                         var restante = d.tamanho - dl[i].enviado;
-						if(taxa > 0) {
+						if(dl[i].taxa > 0) {
 							var segundos = restante / dl[i].taxa;
 							linha.cells[8].innerHTML = tempoString(segundos);
 						} else {
@@ -602,6 +602,15 @@
                                 }
                             break;
                             case "6":
+                                var d = getDownload(obj.id);
+                                if(d != null) {
+                                     var linha = document.getElementById("tabeladownloads").rows[d.linhatabela];
+                                     linha.cells[3].innerHTML = "Enviando";
+									 linha.cells[7].innerHTML = "";
+									 linha.cells[8].innerHTML = "";
+                                }
+                            break;
+                            case "7":
                                 atualizaDownloads(obj.downloads);
                             break;
                         }

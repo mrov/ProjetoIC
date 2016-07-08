@@ -186,6 +186,17 @@ public class Server {
 	}
 	
 	public void baixarMusica(int id, long offset, Socket socket) {
+		JSONObject root = new JSONObject();
+		try {
+			root.put("cod", "3");
+			root.put("param", "6");
+			root.put("id", String.valueOf(id));
+			this.AdminBroadcast(root.toString());
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.getDownload(id).baixar(offset, socket);
 	}
 	
@@ -226,7 +237,7 @@ public class Server {
 		JSONObject root = new JSONObject();
 		try {
 			root.put("cod", "3");
-			root.put("param", "4");
+			root.put("param", "5");
 			root.put("id", String.valueOf(id));
 			this.AdminBroadcast(root.toString());
 		} catch (JSONException e) {
@@ -252,7 +263,7 @@ public class Server {
 		JSONObject root = new JSONObject();
 		try {
 			root.put("cod", "3");
-			root.put("param", "6");
+			root.put("param", "7");
 			
 			JSONArray jsdownloads = new JSONArray();
 			ArrayList<Download> downloads = this.getAllDownloads();
