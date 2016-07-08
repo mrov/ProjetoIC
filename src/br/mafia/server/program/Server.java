@@ -237,7 +237,7 @@ public class Server {
 		JSONObject root = new JSONObject();
 		try {
 			root.put("cod", "3");
-			root.put("param", "4");
+			root.put("param", "5");
 			root.put("id", String.valueOf(id));
 			this.AdminBroadcast(root.toString());
 		} catch (JSONException e) {
