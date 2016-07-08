@@ -4,3 +4,7 @@ usuarios.xml
 usuarios.xml~
 mafia.conf
 mafia.conf~
+
+*.mp3
+*.class
+

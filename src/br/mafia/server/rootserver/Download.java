@@ -75,7 +75,7 @@ public class Download {
 			RandomAccessFile r = new RandomAccessFile(f, "r");
 			try {
 				r.seek(inicio);
-				byte[] bytes = new byte[16 * 1024];
+				byte[] bytes = new byte[1024];
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 				int count;
 				while ((count =r.read(bytes)) > 0) {
